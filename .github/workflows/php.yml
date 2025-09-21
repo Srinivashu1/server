@@ -1,4 +1,4 @@
-name: PHP CI
+name: PHP + MySQL + phpMyAdmin Setup
 
 on:
   push:
@@ -25,9 +25,11 @@ jobs:
           --health-retries=3
 
     steps:
+      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2️⃣ Setup PHP
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -35,9 +37,20 @@ jobs:
           extensions: mbstring, mysqli, pdo_mysql
           coverage: none
 
-      - name: Install phpMyAdmin
+      # 3️⃣ Install Composer dependencies (only if composer.json exists)
+      - name: Install Composer dependencies
+        if: ${{ exists('composer.json') }}
+        run: composer install --no-progress --prefer-dist
+
+      # 4️⃣ Download and extract phpMyAdmin
+      - name: Download phpMyAdmin
         run: |
-          wget https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.tar.gz
-          tar -xvzf phpMyAdmin-latest-all-languages.tar.gz
-          mv phpMyAdmin-* phpmyadmin
+          wget https://files.phpmyadmin.net/phpMyAdmin/5.2.2/phpMyAdmin-5.2.2-all-languages.zip
+          unzip phpMyAdmin-5.2.2-all-languages.zip
+
+      # 5️⃣ Create phpmyadmin folder and move files
+      - name: Setup phpMyAdmin folder
+        run: |
+          mkdir -p phpmyadmin
+          mv phpMyAdmin-5.2.2-all-languages/* phpmyadmin/
           ls -la phpmyadmin
