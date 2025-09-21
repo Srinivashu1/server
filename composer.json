@@ -1,0 +1,10 @@
+{
+  "name": "srinivashu1/server",
+  "description": "My PHP server project",
+  "require": {
+    "php": "^8.2",
+    "ext-mysqli": "*"
+  }
+}
+
+
